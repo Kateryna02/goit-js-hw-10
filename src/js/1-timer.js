@@ -2,12 +2,15 @@
 import flatpickr from "flatpickr";
 // Додатковий імпорт стилів
 import "flatpickr/dist/flatpickr.min.css";
+// Описаний у документації
+import iziToast from "izitoast";
+// Додатковий імпорт стилів
+import "izitoast/dist/css/iziToast.min.css";
 
 
 
 
-
-let userSelectedDate;
+let timeDeadline;
 
 const dataStart = document.querySelector("[data-start]");
 const dataDays = document.querySelector("[data-days]");
@@ -15,28 +18,34 @@ const dataHours = document.querySelector("[data-hours]");
 const dataMinutes = document.querySelector("[data-minutes]");
 const dataSeconds = document.querySelector("[data-seconds]");
 
+dataStart.disabled = true;
+
 const options = {
     enableTime: true,
     time_24hr: true,
     defaultDate: new Date(),
     minuteIncrement: 1,
     onClose(selectedDates) {
-        userSelectedDate = selectedDates[0];
-        const currentDate = Date.now();
+        const userSelectedDate = selectedDates[0];
+        if (userSelectedDate < options.defaultDate) {
+            iziToast.show({
+                message: `Please choose a date in the future`,
+                position: 'topRight',
+                messageColor: 'white',
+                backgroundColor: '#f90909',
 
-        if (userSelectedDate < currentDate) {
-            window.alert("Please choose a date in the future");
-            dataStart.disabled = true;
-        } else {
+
+            });
+        }
+        else {
             dataStart.disabled = false;
+            timeDeadline = userSelectedDate;
         }
     },
 };
 
-dataStart.addEventListener('click', () => {
-    flatpickr("#datetime-picker", options);
-});
 
+flatpickr("#datetime-picker", options);
 function updateTimerInterface({ days, hours, minutes, seconds }) {
     dataDays.textContent = days.toString().padStart(2, '0');
     dataHours.textContent = hours.toString().padStart(2, '0');
@@ -44,29 +53,21 @@ function updateTimerInterface({ days, hours, minutes, seconds }) {
     dataSeconds.textContent = seconds.toString().padStart(2, '0');
 }
 
-let intervalId; 
+
 
 dataStart.addEventListener('click', () => {
-    const currentDate = Date.now();
+    dataStart.disabled = true;
+    const intervalId = setInterval(() => {
+        const currentDate = Date.now();
+        const timeDifference = timeDeadline - currentDate;
+        const timeLeft = convertMs(timeDifference);
+        updateTimerInterface(timeLeft);
 
-    if (userSelectedDate < currentDate) {
-        window.alert("Please choose a date in the future");
-        dataStart.disabled = true;
-    } else {
-        dataStart.disabled = false;
-        const timeDifference = userSelectedDate - currentDate;
-
-        intervalId = setInterval(() => {
-            const currentDate = Date.now();
-            const timeLeft = convertMs(userSelectedDate - currentDate);
-            updateTimerInterface(timeLeft);
-
-            if (userSelectedDate <= currentDate) {
-                clearInterval(intervalId);
-                dataStart.disabled = true;
-            }
-        }, 1000);
-    }
+        if (timeDifference <= 1000) {
+            clearInterval(intervalId);
+            dataStart.disabled = false;
+        } 
+    }, 1000);
 });
 
 
