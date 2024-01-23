@@ -30,8 +30,8 @@ document.querySelector('.form').addEventListener('submit', function (event) {
             backgroundColor: '#83ca75',
             
          
+            
         });
-        
 }).catch((delay) => {
    
     iziToast.show({
