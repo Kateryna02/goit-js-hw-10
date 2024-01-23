@@ -66,7 +66,7 @@ dataStart.addEventListener('click', () => {
         if (timeDifference <= 1000) {
             clearInterval(intervalId);
             dataStart.disabled = false;
-        } 
+        }
     }, 1000);
 });
 

@@ -22,24 +22,24 @@ document.querySelector('.form').addEventListener('submit', function (event) {
     });
 
     promise.then((delay) => {
-       
+
         iziToast.show({
             message: `✅ Fulfilled promise in ${delay}ms`,
             position: 'topRight',
             messageColor: 'white',
             backgroundColor: '#83ca75',
-            
-         
-            
-        });
-}).catch((delay) => {
-   
-    iziToast.show({
-        message: `❌ Rejected promise in ${delay}ms`,
-        position: 'topRight',
-        messageColor: 'white',
-        backgroundColor: '#e56e6e',
 
+
+
+        });
+    }).catch((delay) => {
+
+        iziToast.show({
+            message: `❌ Rejected promise in ${delay}ms`,
+            position: 'topRight',
+            messageColor: 'white',
+            backgroundColor: '#e56e6e',
+
+        });
     });
-  });
 });
